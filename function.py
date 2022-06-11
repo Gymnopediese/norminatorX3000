@@ -1,26 +1,17 @@
-from ast import List
-from dataclasses import field
-from re import L
 from data import File
 
+class CleanFunction():
+	#TODO : differentes partie d'une fonction sont a clean.
 
-class Includes:
 	def __init__(self, file: File) -> None:
-		self.include_list: list = []
-		self.includes: str = ""
+		# commmence par recuperer toute les variables
+		pass
 
+	def find_functions(self):
+		for i, line in enumerate(self.file.lines):
 
-		self.file: File = file
-
-		self.find_includes()
-		# TODO : self.check_auth()
-		self.normify()
-
-		print(self.includes)
-
-
-	def find_includes(self):
-		for line in self.file.lines:
+			print(i, line)
+			continue
 
 
 			if line.__contains__("#include"):
@@ -35,9 +26,14 @@ class Includes:
 			elif line.__contains__("include"):
 				print("erreur, ambigus 'include' ") # TODO throw error
 
-	def normify(self):
-		for line in self.include_list:
-			self.includes += line.replace(" ", "")
 
-if (False):
-	Includes(File('test.c'))
+
+
+
+	def clean_variables(self):
+		# clean les variables : met en deux lignes les declarations en une, etc...
+		pass
+
+
+if True:
+	CleanFunction(File('test.c'))
