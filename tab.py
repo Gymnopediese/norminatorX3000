@@ -2,7 +2,7 @@ import sys
 #variable et fonctions
 varname =["int","bool","char","void","int","int",]
 #sign tp get space left and right
-sign =[">=","<=","==","!=","||","&&","+","-","/",">","<","%"]
+sign =[">=","<=","==","!=","||","&&","+","-","/",">","<","%","="]
 signChilds = [">","<"]
 #sign tp get space right
 signr =[","]
@@ -18,23 +18,24 @@ def anyin(a,b):
     return "null"
 def get():
     global file
-    if len(sys.argv)== 3:
-        if sys.argv[2] == "-i":
-            file = open(sys.argv[1],'r')
+    if "-i" in sys.argv:
+        file = open(sys.argv[1],'r')
     else:
         file = open("temp.c",'r')
     lines = file.readlines()
-    file.close
-def save():
-    global file
-    if len(sys.argv)== 3:
-        if sys.argv[2]== "-i":
-            file = open(sys.argv[1],'w')
-            file.write(''.join(lines))
+    file.close()
+counter = 0
+def save(filen):
+    global counter
+    if "-i" in sys.argv:
+        file = open(filen,'w')
+        file.write(''.join(lines))
     else:
-        open("temp.c","w").write(''.join(lines))
-    file.close
+        open(f"/Users/albaud/Desktop/temp/{counter}temp.c","w").write(''.join(lines))
+        counter+=1
+
 def tabs():
+    global lines
     for i in range(len(lines)):
         count = 1
         tabs = 0
@@ -50,12 +51,32 @@ def tabs():
             for c in range(tabs):
                 lines[i] = "\t"+lines[i]
 def func():
+    funcs = []
     for i in range(len(lines)):
         temp = lines[i]
         temp = temp.replace("\t","")
         temp = temp.split(" ")
+        cas = False
+
         if (temp[0] in varname):
-            lines[i] = lines[i].replace(" ","\t",1)
+            if ';' in lines[i] and temp[0]== "int":
+                lines[i] = lines[i].replace(" ","\t\t",1)
+            else:
+                lines[i] = lines[i].replace(" ","\t",1)
+            cas = True
+            """
+        if "=" in lines[i] and ";" in lines[i]:
+            from string import digits
+            lines[i] = lines[i].split('=')[0].replace(' ','').replace('\n','') + ";\n"
+            funcs.append(lines[i].split('\t')[-1].replace('[','').replace(']','').translate(digits))
+            lines[i]
+        if cas is False:
+            for k in funcs:
+                lines.insert(i+1,k)
+            funcs = []
+            """
+
+
 
 def signslr():
     for i in range(len(lines)):
@@ -105,9 +126,9 @@ def keywordSpace():
             lines[i] = stat.join(temp)
 def header():
     print("caledd");
-    fil = open("headerr.txt",'r')
+    fil = open("/Users/albaud/Desktop/norminator/headerr.txt",'r')
     line = fil.readlines()
-    fir = open("header.txt",'r')
+    fir = open("/Users/albaud/Desktop/norminator/header.txt",'r')
     lir = fir.readlines()
     print(len(line))
     import datetime
@@ -115,8 +136,6 @@ def header():
     for i in lines:
         if  line[0] ==  i:
             return
-    print(len(line[0]))
-    print(len(lir[0]))
     for i in range(len(line)):
         line[i] = line[i].replace('$',"albaud")
         line[i] = line[i].replace('%',sys.argv[1])
@@ -128,21 +147,36 @@ def header():
         line[i] = line[i].replace('=',str(now.second))
         line[i] = line[i][:48]
         line[i]+=lir[i]
-        print(line[i])
         lines.insert(i,line[i])
     lines.insert(i+1,"\n")
 def finalClean():
     global lines
     for i in range(len(lines)):
+        print(i)
+        tabacount = 0;
         lines[i] = lines[i].replace('  ',' ')
+        temp = lines[i]
+
+        while temp[0] == "\t":
+            temp = temp[1:]
+            tabacount+=1
         temp = lines[i].replace(' ','').replace('\t','')
         if temp == "\n":
             lines[i] = temp
+        if lines[i] == "\n":
+            if i > 0 and i < len(lines):
+                if "include" not in lines[i-1] and anyin(varname,lines[i-1]) == "null" and ('}\n' not in lines[i-1] or anyin(varname,lines[i+1])== "null"):
+
+                    lines[i] = ""
         try:
             if temp == '}\n' and "void" in lines[i+1]:
                 lines.insert(i+1,"\n")
         except:
             pass
+        if '{\n' in temp and  temp != '{\n':
+            lines[i] = lines[i][:len(lines[i])-2] + "\n"
+            ress = '\t'*tabacount
+            lines.insert(i+1,ress+"{\n")
         if anyin(varname,lines[i]):
             lines[i] = lines[i].replace('()','(void)')
         lines[i] = lines[i].replace(' \n','\n')
@@ -152,28 +186,37 @@ def finalClean():
         tem = anyin(cheat,lines[i])
         if anyin(cheat,lines[i]) != "null":
             print("CHEAT")
-file = open(sys.argv[1])
-lines = file.readlines()
-
-tabs()
-func()
-signslr()
-signsr()
-keywordSpace()
-
-finalClean()
-header()
-save()
-
+    while lines[len(lines)-1] == '\n':
+        lines.pop()
+def normall(path):
+    for i in directories:
+        norme(path)
+def norme(path):
+    global lines
+    file = open(path)
+    lines = file.readlines()
+    tabs()
+    func()
+    signslr()
+    signsr()
+    keywordSpace()
+    finalClean()
+    header()
+    save(path)
+if "-all" in sys.argv:
+    for i in sys.argv:
+        if ".c" in i:
+            norme(i)
+else :
+    norme(sys.argv[1])
 import os
-
-if len(sys.argv)== 3:
-    if sys.argv[2] == "-i":
-        print('norminette '+sys.argv[1])
-        stream = os.popen('norminette '+sys.argv[1])
-        file = open(sys.argv[1],'r')
+if "-all" in sys.argv:
+    stream = os.popen('norminette /Users/albaud/Desktop/temp/*')
+elif "-i" in sys.argv:
+    print('norminette '+sys.argv[1])
+    stream = os.popen('norminette '+sys.argv[1])
 else:
-    stream = os.popen('norminette temp.c')
+    stream = os.popen('norminette /Users/albaud/Desktop/temp/')
     file = open("temp.c",'r')
 output = stream.read()
 print(output)
