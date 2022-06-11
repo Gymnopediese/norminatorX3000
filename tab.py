@@ -124,31 +124,7 @@ def keywordSpace():
             if temp[1][0] != ' ':
                 temp[1] = ' ' +temp[1]
             lines[i] = stat.join(temp)
-def header():
-    print("caledd");
-    fil = open("/Users/albaud/Desktop/norminator/headerr.txt",'r')
-    line = fil.readlines()
-    fir = open("/Users/albaud/Desktop/norminator/header.txt",'r')
-    lir = fir.readlines()
-    print(len(line))
-    import datetime
-    now = datetime.datetime.now()
-    for i in lines:
-        if  line[0] ==  i:
-            return
-    for i in range(len(line)):
-        line[i] = line[i].replace('$',"albaud")
-        line[i] = line[i].replace('%',sys.argv[1])
-        line[i] = line[i].replace('!',str(now.year))
-        line[i] = line[i].replace('@',str(now.month))
-        line[i] = line[i].replace('F',str(now.day))
-        line[i] = line[i].replace('^',str(now.hour))
-        line[i] = line[i].replace('&',str(now.minute))
-        line[i] = line[i].replace('=',str(now.second))
-        line[i] = line[i][:48]
-        line[i]+=lir[i]
-        lines.insert(i,line[i])
-    lines.insert(i+1,"\n")
+
 def finalClean():
     global lines
     for i in range(len(lines)):
