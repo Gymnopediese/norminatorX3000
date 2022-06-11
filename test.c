@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#  include <unistd.h>
 #include <unistd.h>
+#  include   <unistd.h>
+#include  <unistd.h>  
 
 void ft_comb(int index, int data[], int number);
 
@@ -47,5 +50,3 @@ void ft_comb(int index, int data[], int number)
 	ft_comb(index + 1, data, number);
 	ft_comb(index + 0, data, number);
 }
-
-

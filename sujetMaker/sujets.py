@@ -12,7 +12,7 @@ def anyin(a,b):
             return i
     return "null"
 function_name = ["void","int","char"]
-def co(num):
+def co(num): # TODO on l'a copier dans utils.py !!!
     if num == 0:
         return '00'
     if num <10:
